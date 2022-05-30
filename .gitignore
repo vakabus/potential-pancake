@@ -1,0 +1,7 @@
+punchpress-visualization/target/
+punchpress-simulator.bin
+punchpress-sample-controller.bin
+.mypy_cache/
+punches.in
+punches.out
+
