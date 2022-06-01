@@ -1,0 +1,16 @@
+digraph {
+	label = "Controller State Machine"
+
+	boot -> init [label = "wait 1ms and afterwards wait for blue button"];
+	init -> waiting [label = "determine head position"];
+	waiting -> moving;
+	moving -> punching;
+	punching -> waiting;
+
+	init -> failed;
+	moving -> failed;
+	punching -> failed;
+
+	waiting [label="waiting for commands"];
+}
+
