@@ -25,7 +25,11 @@ Všechny příkazy se voláme z rootu gitového repozitáře se zdrojáky, pokud
 	- ==> když se poloha nezmění $250ms$, je bezpečné dělat díru
 
 # Módy
-Běh controlleru si rozdělíme do několika módů podle funcionality. Efektivně tak děláme z controlleru stavový automat. ![state_machine.png](state_machine.png)
+Běh controlleru si rozdělíme do několika módů podle funcionality. Efektivně tak děláme z controlleru stavový automat. Nepotřebujeme pak dokazovat, že je celý program korektní, stačí to dokazovat pro jednotlivé stavy automatu. Návrh rozdělení na stavy je níže v diagramu:
+
+![state_machine.png](state_machine.png)
+
+Víceméně jediné zajímavé stavy jsou `MOVING` a `INIT`. Při nich prakticky dochází k prolínání několika tasků najednou. Jinak je vše sekvenční. (Když nepočítáme systick interrupt handler.)
 
 ## `BOOT`
 V tomto stavu dochází k několika sekvenčním operacím, jejichž průběh lze sledovat na sériové konzoli.
