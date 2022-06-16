@@ -6,7 +6,8 @@ digraph {
 	waiting -> moving;
 	moving -> punching;
 	punching -> waiting;
-
+	
+	waiting -> failed;
 	init -> failed;
 	moving -> failed;
 	punching -> failed;

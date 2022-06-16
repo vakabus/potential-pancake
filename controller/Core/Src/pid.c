@@ -1,29 +1,37 @@
 #include "pid.h"
+#include "stm32f4xx_hal.h"
+#include "log.h"
 
-void pid_vars_init(pid_vars_t* vars, double Kp, double Ki, double Kd, double output_max, double output_min) {
+void pd_vars_init(pid_vars_t* vars, float Kp, float Kd, int32_t output_max, int32_t output_min) {
 	vars->Kd = Kd;
-	vars->Ki = Ki;
 	vars->Kp = Kp;
-
-	for (int i = 0; i < PID_VARS_ERROR_ARR_SIZE; i++) vars->errors[i] = 0;
-	vars->errors_index = 0;
-	vars->integral_sum = 0;
 
 	vars->output_max = output_max;
 	vars->output_min = output_min;
 
-	vars->dt = 1;
+	vars->last_e = 0;
+	vars->last_last_e = 0;
+	vars->last_output = 0;
+	vars->last_filtered_e = 0;
+	vars->last_timestamp = HAL_GetTick();
 }
 
-double pid(pid_vars_t* vars, double e) {
-	/* update the integral array */
-	double prev_err = vars->errors[vars->errors_index];
-	vars->integral_sum += e * (vars->dt);
-	vars->integral_sum -= prev_err * (vars->dt);
-	vars->errors_index = (vars->errors_index + 1) % PID_VARS_ERROR_ARR_SIZE;
-	vars->errors[vars->errors_index] = e;
+int32_t pd_controller(pid_vars_t* vars, int32_t e) {
+	uint32_t timestamp = HAL_GetTick();
 
-	double output = (vars->Kp)*e + (vars->Ki)*(vars->integral_sum) + (vars->Kd)* ((e - prev_err)/(vars->dt));
+	/* we refuse to run more often than once every tick due to division by zero */
+	if (vars->last_timestamp == timestamp) return vars->last_output;
+
+	/* calculate dt */
+	uint32_t dt = timestamp - vars->last_timestamp;
+	vars->last_timestamp = timestamp;
+
+	/* calculate PD controller */
+	int32_t filtered_e = (e + vars->last_e + vars->last_last_e) / 3;
+	float derivative = (((float)(filtered_e - vars->last_filtered_e)) / (float)dt);
+	float o = (vars->Kp)*e + (vars->Kd) * derivative;
+	o = o + ((o > 0) - (o < 0))*10; // make sure that we can overcome static friction
+	int32_t output = round(o);
 
 	/* limit output within output_min and output_max */
 	if (output>(vars->output_max))
@@ -31,5 +39,9 @@ double pid(pid_vars_t* vars, double e) {
 	else if (output<(vars->output_min))
 	output = vars->output_min;
 
+	vars->last_output = output;
+	vars->last_last_e = vars->last_e;
+	vars->last_e = e;
+	vars->last_filtered_e = filtered_e;
 	return output;
 }

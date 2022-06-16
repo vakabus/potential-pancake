@@ -1,4 +1,5 @@
 #include "usart.h"
+#include "stm32f4xx_hal.h"
 #include <limits.h>
 
 int _read(int file, char *ptr, int len) {

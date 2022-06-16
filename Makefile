@@ -1,6 +1,6 @@
 .PHONY: vis
 vis: punches.in punchpress-visualization/target/punchpressvis/bin/punchpressvis
-	punchpress-visualization/target/punchpressvis/bin/punchpressvis -c /dev/ttyACM0 -i punches.in -o punches.out
+	punchpress-visualization/target/punchpressvis/bin/punchpressvis -c /dev/ttyACM1 -i punches.in -o punches.out
 
 punchpress-visualization/pom.xml:
 	git submodule update --init --recursive
