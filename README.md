@@ -25,7 +25,7 @@ Všechny příkazy se voláme z rootu gitového repozitáře se zdrojáky, pokud
 	- ==> když se poloha nezmění $250ms$, je bezpečné dělat díru
 
 # Módy
-Běh controlleru si rozdělíme do několika módů podle funcionality. Efektivně tak děláme z controlleru stavový automat. ![[state_machine.png]]
+Běh controlleru si rozdělíme do několika módů podle funcionality. Efektivně tak děláme z controlleru stavový automat. ![state_machine.png](state_machine.png)
 
 ## `BOOT`
 V tomto stavu dochází k několika sekvenčním operacím, jejichž průběh lze sledovat na sériové konzoli.
